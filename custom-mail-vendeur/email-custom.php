@@ -14,6 +14,8 @@
 
   function custom_js() {
 
+      wp_register_style('custom_css', plugins_url('/css/style.css',__FILE__ ));
+      wp_enqueue_style('custom_css');
       wp_enqueue_script( 'jquery_custom', plugins_url( '/js/jquery.js', __FILE__) );
       wp_enqueue_script( 'my_custom_js', plugins_url( '/js/main.js', __FILE__ ) );
 

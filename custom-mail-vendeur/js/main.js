@@ -1,66 +1,167 @@
 $(document).ready(function() {
 
-    localStorage.removeItem("email_custom"); 
+    // Affuchage logo cocolis si different de mode de livraison cocolis
+    setTimeout(() => {
+        $('#wcfmmp_addon_inactive_notice_box').hide() ;
 
-    $('#wcfm_order_status option:nth-child(1)').on('click', function(){
-        $('#getForm').remove() ;
-    });
-
-    $('#wcfm_order_status option:nth-child(2)').on('click', function(){
-        $('#getForm').remove() ;
-    });
-
-    $('#wcfm_order_status option:nth-child(3)').on('click', function(){
-        $('#getForm').remove() ;
-    });
-
-    $('#wcfm_order_status option:nth-child(4)').on('click', function(){
-
-        $('#wcfm_order_status_update_wrapper').after('<div id="getForm" ></div>') ;
-
-        $.get( "/wp-content/plugins/custom-mail-vendeur/mail/mail-form.php", function( data ) {
-            $( "#getForm" ).html( data );
+        console.log('loznding') ;
+        $('#shipping_method li label:not(:contains("Livraison Cocolis"))').each(function () {
+            $(this).children("svg").hide();
         });
 
-    });
+        $(document).on('click','.shipping-calculator-form button',function(e){
+            console.log('sendd') ;
+            setTimeout(function () { 
+                function1(); 
+                function2(); 
+            }, 5000, $(this));
+            function function1() {
+                $('#shipping_method li label:not(:contains("Livraison Cocolis"))').each(function () {
+                     $(this).children("svg").hide();
+                })
+            }
+    
+            function function2() {
+                $('#shipping_method li label:not(:contains("Livraison Cocolis"))').each(function () {
+                    $(this).children("svg").hide();
+                })
+            }
+        });
 
-    $('#wcfm_order_status option:nth-child(5)').on('click', function(){
-        $('#getForm').remove() ;
-    });
+        setTimeout(() => {
+            var request = new XMLHttpRequest();  
+            request.open('POST', '/panier/', true);
+            request.onreadystatechange = function(){
+                if (this.readyState == 4 && this.status == 200 || this.readyState == 4 && this.status == 403 ){
+                    $('#shipping_method li label:not(:contains("Livraison Cocolis"))').each(function () {
+                        $(this).children("svg").hide();
+                    });
+                }    
+            };
+            request.send();
+        }, 2000);
 
+        setTimeout(() => {
+            var request = new XMLHttpRequest();  
+            request.open('POST', '/?wc-ajax=update_order_review', true);
+            request.onreadystatechange = function(){
+                if (this.readyState == 4 && this.status == 200 || this.readyState == 4 && this.status == 403 ){
+                    $('#shipping_method li label:not(:contains("Livraison Cocolis"))').each(function () {
+                        $(this).children("svg").hide();
+                    });
+                }    
+            };
+            request.send();
+        }, 1000);
 
-    // Get data from textarea
-    var selectTerminer = $('#wcfm_order_status')[0].value ;
+        $('#billing_postcode').on('change', function(){
+            setTimeout(() => {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200 || this.readyState == 4 && this.status == 500 || this.readyState == 4 && this.status == 403 ) {
+                        $('#shipping_method li label:not(:contains("Livraison Cocolis"))').each(function () {
+                            $(this).children("svg").hide();
+                        });
+                    }
+                };
+                xhttp.open("POST", "/?wc-ajax=update_order_review", true);
+                xhttp.send();
+            }, 3000);
+        });
 
-    $('#wcfm_modify_order_status').on('click', function() {
+        $('#wcfmmp_user_location').on('change', function(){
+            setTimeout(() => {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200 || this.readyState == 4 && this.status == 500 || this.readyState == 4 && this.status == 403 ) {
+                        $('#shipping_method li label:not(:contains("Livraison Cocolis"))').each(function () {
+                            $(this).children("svg").hide();
+                        });
+                    }
+                };
+                xhttp.open("POST", "/?wc-ajax=update_order_review", true);
+                xhttp.send();
+            }, 3000);
+        });
 
-        if(selectTerminer == "wc-completed") {
+        $(document).on('click','.shipping_method',function(e){
+            setTimeout(function () { 
+                function1(); 
+                function2(); 
+            }, 4000, $(this));
+            function function1() {
+                $('#shipping_method li label:not(:contains("Livraison Cocolis"))').each(function () {
+                     $(this).children("svg").hide();
+                })
+            }
+    
+            function function2() {
+                $('#shipping_method li label:not(:contains("Livraison Cocolis"))').each(function () {
+                    $(this).children("svg").hide();
+                })
+            }
+        });
 
-           var email =  $('#custom-form-email')[0].value ;
+            
+    }, 10);
 
-           var send = "email=" + email ;
+    // custom mail vendeur
+    $('#wcfm_modify_order_status').wrapInner('<span id="clicko" ></span>') ; 
 
-           console.log('email : ' , send ) ;
+    $('#wcfm_order_status_update_wrapper').on('change', 'select', function() {
 
+        var index = $(this).find('option:selected').index();
 
-           $.ajax({
+        if (index == 3) {
+            $('#wcfm_order_status_update_wrapper').after('<div id="getForm" ></div>') ;
 
-                type: "POST",
-                url: "/wp-content/plugins/woocommerce/templates/emails/customer-completed-order.php",
-                data: send,
-                
-                success: function(data) {
-                   console.log('data: ' , data ) ;
-                },
-                error: function() {
-                    console.log('non envoyer') ;
-                 },
-
+            $.get( "/wp-content/plugins/custom-mail-vendeur/mail/mail-form.php", function( data ) {
+                $( "#getForm" ).html( data );
             });
 
-         }
+        } else {
+            $('#getForm').hide() ;
+        }
+
+    });
+
+
+    $('#clicko').on('click', function() {
+        
+        var email =  $('#custom-form-email')[0].value ;
+
+        send = "email=" + email ;
+
+        if( $('#wcfm_order_status')[0].value == "wc-completed" ) {
+
+            var emailContenue =  $('#custom-form-email')[0].value ;
+
+            var adresseEmail = $('.address').children('p').eq(1)[0].lastElementChild.innerHTML ;
+
+            var detailsCommande = $('#orders_details_items_expander').html() ;
+
+            send = "emailContenue=" + emailContenue + "&adresseEmail=" + adresseEmail + "&detailsCommande=" + detailsCommande ;
+
+            var xhttp = new XMLHttpRequest();
+
+            xhttp.onreadystatechange = function() {
+
+            };
+
+            xhttp.open("POST", "/wp-content/plugins/custom-mail-vendeur/mail/controller-mail-vendeur.php", true);
+            xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhttp.send(send);
+
+            $('#custom-form-email')[0].value = '' ;
+        
+        }else{
+            console.log('tsy completed') ;
+        }
 
     })
+
+
+
 
 
 
